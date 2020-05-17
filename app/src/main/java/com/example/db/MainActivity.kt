@@ -2,11 +2,30 @@ package com.example.db
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
+
+    companion object{
+        lateinit var dbHandler: DBHandler
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        dbHandler = DBHandler(this, null, null, 1)
+
+        viewPersons()
+    }
+
+    private fun viewPersons(){
+        val personsList = dbHandler.getPersons(this)
+        val adapter = PersonAdapter(this, personsList)
+        val recyclerView : RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false) as RecyclerView.LayoutManager
+        recyclerView.adapter = adapter
     }
 }

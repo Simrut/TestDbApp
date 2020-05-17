@@ -7,8 +7,8 @@ import android.widget.Toast
 
 class DBHandler(
     context: Context,
-    name: String,
-    factory: SQLiteDatabase.CursorFactory,
+    name: String?,
+    factory: SQLiteDatabase.CursorFactory?,
     version: Int
 ) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
