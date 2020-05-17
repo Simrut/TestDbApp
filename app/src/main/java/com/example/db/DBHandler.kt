@@ -1,5 +1,6 @@
 package com.example.db
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -57,5 +58,20 @@ class DBHandler(
         cursor.close()
         db.close()
         return persons
+    }
+
+    fun addPerson(mCtx: Context, person: Person) {
+        val values = ContentValues()
+        values.put(COLUMN_PERSONNAME, person.personName)
+        values.put(COLUMN_INFECTIONRISK, person.infectionRisk)
+
+        val db = this.writableDatabase
+        try {
+            db.insert(CONTACTED_PERSONS_TABLE_NAME, null, values)
+            Toast.makeText(mCtx, "Customer Added", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(mCtx, e.message, Toast.LENGTH_SHORT).show()
+        }
+        db.close()
     }
 }

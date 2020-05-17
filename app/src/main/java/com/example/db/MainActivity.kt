@@ -28,4 +28,9 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false) as RecyclerView.LayoutManager
         recyclerView.adapter = adapter
     }
+
+    override fun onResume() {
+        viewPersons()
+        super.onResume()
+    }
 }
