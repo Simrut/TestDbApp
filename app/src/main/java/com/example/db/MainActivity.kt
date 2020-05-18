@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    companion object{
+    companion object {
         lateinit var dbHandler: DBHandler
     }
 
@@ -22,16 +22,18 @@ class MainActivity : AppCompatActivity() {
 
         viewPersons()
         fab.setOnClickListener {
-        val intent = Intent(this, AddPersonActivity::class.java)
+            val intent = Intent(this, AddPersonActivity::class.java)
             startActivity(intent)
-    }
+        }
+        APIHandler().postJSON()
     }
 
-    private fun viewPersons(){
+    private fun viewPersons() {
         val personsList = dbHandler.getPersons(this)
         val adapter = PersonAdapter(this, personsList)
-        val recyclerView : RecyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false) as RecyclerView.LayoutManager
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false) as RecyclerView.LayoutManager
         recyclerView.adapter = adapter
     }
 
