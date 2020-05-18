@@ -56,6 +56,7 @@ class DBHandler(
                 .show()
         }
         cursor.close()
+        //TODO delete? val dbpath = db.path.toString()
         db.close()
         return persons
     }

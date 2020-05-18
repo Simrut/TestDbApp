@@ -8,8 +8,8 @@ import org.json.JSONObject
 
 
 class JSONHandler {
-    public fun getResults(DB_PATH:String, TABLE_NAME:String): JSONArray? {
-        val myPath: String = DB_PATH // Set path to your database
+    public fun getResults(DB_PATH:String, DB_NAME:String, TABLE_NAME:String): JSONArray? {
+        val myPath: String = DB_PATH + DB_NAME// Set path to your database
         val myTable: String = TABLE_NAME //Set name of your table
 
         //or you can use `context.getDatabasePath("my_db_test.db")`

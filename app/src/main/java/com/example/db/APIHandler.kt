@@ -13,7 +13,7 @@ class APIHandler {
         val url = "http://my-json-feed"
 
         //TODO input DBname etc into function
-        val jsonArray  = JSONHandler().getResults("PandemiaRisk.db", "Contacts")
+        val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
 
         val jsonObjectRequest = JsonArrayRequest(Request.Method.POST, url, jsonArray,
             Response.Listener { response ->
