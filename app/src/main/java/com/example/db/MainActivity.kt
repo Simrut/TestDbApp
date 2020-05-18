@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddPersonActivity::class.java)
             startActivity(intent)
         }
-        APIHandler().postJSON()
+        APIHandler().postJSON(this)
     }
 
     private fun viewPersons() {

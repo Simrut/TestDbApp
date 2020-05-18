@@ -1,24 +1,46 @@
 package com.example.db
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.android.volley.Response
 import com.android.volley.Request
+import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.JsonObjectRequest
-import org.json.JSONArray
+import com.android.volley.toolbox.Volley
 
+class RequestHandler constructor(context: Context) {
+    companion object {
+        @Volatile
+        private var INSTANCE: RequestHandler? = null
+        fun getInstance(context: Context) =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: RequestHandler(context).also {
+                    INSTANCE = it
+                }
+            }
+    }
+
+    val requestQueue: RequestQueue by lazy {
+        // applicationContext is key, it keeps you from leaking the
+        // Activity or BroadcastReceiver if someone passes one in.
+        Volley.newRequestQueue(context.applicationContext)
+    }
+    fun <T> addToRequestQueue(req: Request<T>) {
+        requestQueue.add(req)
+    }
+}
 
 class APIHandler {
-    fun postJSON() {
-        val url = "http://my-json-feed"
+    fun postJSON(mCtx: Context) {
+        val url = "https://my-json-feed"
 
-        //TODO input DBname etc into function
         val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
 
         val jsonObjectRequest = JsonArrayRequest(Request.Method.POST, url, jsonArray,
             Response.Listener { response ->
                 Log.d("HttpPOSTResponse", "Response: %s".format(response.toString()))
-                //TODO display answers somehow
+                Toast.makeText(mCtx, "Response: %s".format(response.toString()), Toast.LENGTH_SHORT).show()
                 //textView.text = "Response: %s".format(response.toString())
             },
             Response.ErrorListener { error ->
@@ -28,7 +50,7 @@ class APIHandler {
 
         //TODO do smth about queue?
         // Access the RequestQueue through your singleton class.
-        //MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
+        RequestHandler.getInstance(mCtx).addToRequestQueue(jsonObjectRequest)
 
     }
 }
