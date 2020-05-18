@@ -25,7 +25,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddPersonActivity::class.java)
             startActivity(intent)
         }
-        APIHandler().postJSON(this)
+
+        sendrequest.setOnClickListener {
+            val intent = Intent(this, UploadToAPIActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun viewPersons() {

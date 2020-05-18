@@ -32,8 +32,7 @@ class RequestHandler constructor(context: Context) {
 }
 
 class APIHandler {
-    fun postJSON(mCtx: Context) {
-        val url = "https://postman-echo.com/"
+    fun postJSON(mCtx: Context, url:String) {
 
         val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
 
@@ -48,7 +47,6 @@ class APIHandler {
             }
         )
 
-        //TODO do smth about queue?
         // Access the RequestQueue through your singleton class.
         RequestHandler.getInstance(mCtx).addToRequestQueue(jsonObjectRequest)
 
