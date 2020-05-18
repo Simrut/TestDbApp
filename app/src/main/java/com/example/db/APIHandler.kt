@@ -33,7 +33,7 @@ class RequestHandler constructor(context: Context) {
 
 class APIHandler {
     fun postJSON(mCtx: Context) {
-        val url = "https://my-json-feed"
+        val url = "https://postman-echo.com/"
 
         val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
 
