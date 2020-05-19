@@ -1,4 +1,4 @@
-# Corona App
+# Test Purpose App with local database and API calls
 
 ## Functionality
 The app is able to save to a local sqlite database and serialize the data contained to then send it to an arbitrary API specified by the user.
