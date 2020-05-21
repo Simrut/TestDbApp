@@ -28,7 +28,7 @@
         android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="Infection Risk"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,4 +58,5 @@
         app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editInfectionRisk" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
