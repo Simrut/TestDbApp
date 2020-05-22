@@ -6,10 +6,9 @@ import android.widget.Toast
 import com.android.volley.Response
 import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
+import com.android.volley.toolbox.*
 
-class RequestHandler constructor(context: Context) {
+/*class RequestHandler constructor(context: Context) {
     companion object {
         @Volatile
         private var INSTANCE: RequestHandler? = null
@@ -29,10 +28,20 @@ class RequestHandler constructor(context: Context) {
     fun <T> addToRequestQueue(req: Request<T>) {
         requestQueue.add(req)
     }
-}
+}*/
 
 class APIHandler {
     fun postJSON(mCtx: Context, url:String) {
+// Instantiate the cache
+        val cache = DiskBasedCache(mCtx.cacheDir, 1024 * 1024) // 1MB cap
+
+// Set up the network to use HttpURLConnection as the HTTP client.
+        val network = BasicNetwork(HurlStack())
+
+// Instantiate the RequestQueue with the cache and network. Start the queue.
+        val requestQueue = RequestQueue(cache, network).apply {
+            start()
+        }
 
         val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
 
@@ -43,12 +52,14 @@ class APIHandler {
                 //textView.text = "Response: %s".format(response.toString())
             },
             Response.ErrorListener { error ->
+                Toast.makeText(mCtx, "An error occured", Toast.LENGTH_SHORT).show()
                 Log.e("HttpPOSTError", "Error: %s".format(error.toString()))
             }
         )
 
         // Access the RequestQueue through your singleton class.
-        RequestHandler.getInstance(mCtx).addToRequestQueue(jsonObjectRequest)
-
+        //RequestHandler.getInstance(mCtx).addToRequestQueue(jsonObjectRequest)
+        requestQueue.add(jsonObjectRequest)
+        requestQueue.start()
     }
 }
