@@ -8,7 +8,7 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.*
 
-/*class RequestHandler constructor(context: Context) {
+class RequestHandler constructor(context: Context) {
     companion object {
         @Volatile
         private var INSTANCE: RequestHandler? = null
@@ -25,41 +25,42 @@ import com.android.volley.toolbox.*
         // Activity or BroadcastReceiver if someone passes one in.
         Volley.newRequestQueue(context.applicationContext)
     }
+
     fun <T> addToRequestQueue(req: Request<T>) {
         requestQueue.add(req)
     }
-}*/
+
+    fun startRequestQueue() {
+        requestQueue.start()
+    }
+}
 
 class APIHandler {
-    fun postJSON(mCtx: Context, url:String) {
-// Instantiate the cache
-        val cache = DiskBasedCache(mCtx.cacheDir, 1024 * 1024) // 1MB cap
 
-// Set up the network to use HttpURLConnection as the HTTP client.
-        val network = BasicNetwork(HurlStack())
-
-// Instantiate the RequestQueue with the cache and network. Start the queue.
-        val requestQueue = RequestQueue(cache, network).apply {
-            start()
-        }
-
-        val jsonArray  = JSONHandler().getResults("/data/user/0/com.example.db/databases/","PandemiaRisk.db", "Contacts")
+    fun postJSON(mCtx: Context, url: String) {
+        val jsonArray = JSONHandler().getResults(
+            "/data/user/0/com.example.db/databases/",
+            "PandemiaRisk.db",
+            "Contacts"
+        )
 
         val jsonObjectRequest = JsonArrayRequest(Request.Method.POST, url, jsonArray,
             Response.Listener { response ->
                 Log.d("HttpPOSTResponse", "Response: %s".format(response.toString()))
-                Toast.makeText(mCtx, "Response: %s".format(response.toString()), Toast.LENGTH_SHORT).show()
+                Toast.makeText(mCtx, "Response: %s".format(response.toString()), Toast.LENGTH_SHORT)
+                    .show()
                 //textView.text = "Response: %s".format(response.toString())
             },
             Response.ErrorListener { error ->
                 Toast.makeText(mCtx, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpPOSTError", "Error: %s".format(error.toString()))
+                Log.e("HttpPOSTError", "Error during exec of request: %s".format(error.toString()))
             }
         )
 
         // Access the RequestQueue through your singleton class.
-        //RequestHandler.getInstance(mCtx).addToRequestQueue(jsonObjectRequest)
-        requestQueue.add(jsonObjectRequest)
-        requestQueue.start()
+        val requestHandler = RequestHandler.getInstance(mCtx)
+        requestHandler.addToRequestQueue(jsonObjectRequest)
+        requestHandler.startRequestQueue()
+
     }
 }
