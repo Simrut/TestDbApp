@@ -68,7 +68,7 @@ class DBHandler(
         val db = this.writableDatabase
         try {
             db.insert(CONTACTED_PERSONS_TABLE_NAME, null, values)
-            Toast.makeText(mCtx, "Customer Added", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mCtx, "Person Added", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(mCtx, e.message, Toast.LENGTH_SHORT).show()
         }
