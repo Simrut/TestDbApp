@@ -43,9 +43,9 @@ class APIHandler {
             "PandemiaRisk.db",
             "Contacts"
         )
-
-        val jsonObjectRequest = JsonArrayRequest(Request.Method.POST, url, jsonArray,
-            Response.Listener { response ->
+        //TODO find good request, JSONArray might only be suitable for receiving JSON Arrays
+        val jsonObjectRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
                 Log.d("HttpPOSTResponse", "Response: %s".format(response.toString()))
                 Toast.makeText(mCtx, "Response: %s".format(response.toString()), Toast.LENGTH_SHORT)
                     .show()
