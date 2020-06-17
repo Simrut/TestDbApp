@@ -1,6 +1,5 @@
 package com.example.db
 
-import android.R
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -50,7 +49,7 @@ class RequestHandler constructor(context: Context) {
             // your trusted certificates (root and any intermediate certs)
             val `in`: InputStream =
                 context.applicationContext.getResources()
-                    .openRawResource(R.raw.myKestore)
+                    .openRawResource(com.example.db.R.raw.mykeystore)
             try {
                 // Initialize the keystore with the provided trusted certificates
                 // Provide the password of the keystore
