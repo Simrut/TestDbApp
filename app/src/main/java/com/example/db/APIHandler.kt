@@ -1,12 +1,20 @@
 package com.example.db
 
+import android.R
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.android.volley.Response
 import com.android.volley.Request
 import com.android.volley.RequestQueue
-import com.android.volley.toolbox.*
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import java.io.InputStream
+import java.security.KeyStore
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManagerFactory
+
 
 class RequestHandler constructor(context: Context) {
     companion object {
@@ -32,6 +40,33 @@ class RequestHandler constructor(context: Context) {
 
     fun startRequestQueue() {
         requestQueue.start()
+    }
+
+    private fun newSslSocketFactory(context: Context): SSLSocketFactory? {
+        return try {
+            // Get an instance of the Bouncy Castle KeyStore format
+            val trusted: KeyStore = KeyStore.getInstance("BKS")
+            // Get the raw resource, which contains the keystore with
+            // your trusted certificates (root and any intermediate certs)
+            val `in`: InputStream =
+                context.applicationContext.getResources()
+                    .openRawResource(R.raw.keystore)
+            try {
+                // Initialize the keystore with the provided trusted certificates
+                // Provide the password of the keystore
+                trusted.load(`in`, KEYSTORE_PASSWORD)
+            } finally {
+                `in`.close()
+            }
+            val tmfAlgorithm: String = TrustManagerFactory.getDefaultAlgorithm()
+            val tmf: TrustManagerFactory = TrustManagerFactory.getInstance(tmfAlgorithm)
+            tmf.init(trusted)
+            val context: SSLContext = SSLContext.getInstance("TLS")
+            context.init(null, tmf.getTrustManagers(), null)
+            context.getSocketFactory()
+        } catch (e: Exception) {
+            throw AssertionError(e)
+        }
     }
 }
 
