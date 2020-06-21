@@ -31,7 +31,10 @@ class RequestHandler constructor(context: Context) {
     val requestQueue: RequestQueue by lazy {
         // applicationContext is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
-        Volley.newRequestQueue(context.applicationContext, HurlStack(null, newSslSocketFactory(context)))
+        Volley.newRequestQueue(
+            context.applicationContext,
+            HurlStack(null, newSslSocketFactory(context))
+        )
     }
 
     fun <T> addToRequestQueue(req: Request<T>) {
@@ -71,6 +74,18 @@ class RequestHandler constructor(context: Context) {
 }
 
 class APIHandler {
+
+    fun getSecret(mCtx: Context) {
+        val url = "http://www.example.com"
+        val requestSecret = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                Log.d("SecretResponse", "Secret is %s".format(response.toString()))
+            },
+            Response.ErrorListener { error ->
+                Log.e("HttpSecretError", "Could not get secret, please check connection")
+            }
+        )
+    }
 
     fun postJSON(mCtx: Context, url: String) {
         val jsonArray = JSONHandler().getResults(
