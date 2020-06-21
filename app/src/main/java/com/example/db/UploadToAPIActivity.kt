@@ -11,6 +11,7 @@ class UploadToAPIActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_upload)
+            val apiHandler = APIHandler(this)
 
             var uploadURL: String
 
@@ -20,8 +21,12 @@ class UploadToAPIActivity : AppCompatActivity() {
                     editUploadUrl.requestFocus()
                 } else {
                     uploadURL = editUploadUrl.text.toString()
-                    APIHandler().postJSON(this, uploadURL)
+                    apiHandler.postJSON(uploadURL)
                 }
+            }
+
+            btnGetSecret.setOnClickListener {
+                    apiHandler.getSecret()
             }
         }
 }

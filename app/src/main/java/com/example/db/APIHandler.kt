@@ -75,12 +75,13 @@ class RequestHandler constructor(context: Context) {
     }
 }
 
-class APIHandler {
+class APIHandler constructor(context: Context) {
+    val context = context
     // Access the RequestQueue through your singleton class.
+    val requestHandler = RequestHandler.getInstance(context)
 
 
-    fun getSecret(mCtx: Context) {
-        val requestHandler = RequestHandler.getInstance(mCtx)
+    fun getSecret() {
         val url = "http://www.example.com"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
@@ -91,11 +92,12 @@ class APIHandler {
             }
         )
         requestHandler.addToRequestQueue(requestSecret)
-        requestHandler.startRequestQueue()
+        requestHandler.startRequestQueue()//TODO dont invoke this multiple times but once
+        Toast.makeText(context, "Secret pulled from server", Toast.LENGTH_SHORT)
+            .show()
     }
 
-    fun postJSON(mCtx: Context, url: String) {
-        val requestHandler = RequestHandler.getInstance(mCtx)
+    fun postJSON(url: String) {
         val jsonArray = JSONHandler().getResults(
             "/data/user/0/com.example.db/databases/",
             "PandemiaRisk.db",
@@ -140,9 +142,9 @@ class APIHandler {
                 }
             }
             requestHandler.addToRequestQueue(stringRequest)
+            requestHandler.startRequestQueue()//TODO dont invoke every time but once (in constructor?)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        requestHandler.startRequestQueue()
     }
 }
