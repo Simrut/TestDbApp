@@ -3,13 +3,15 @@ package com.example.db
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
+import com.android.volley.*
+import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.InputStream
+import java.io.UnsupportedEncodingException
 import java.security.KeyStore
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -74,8 +76,11 @@ class RequestHandler constructor(context: Context) {
 }
 
 class APIHandler {
+    // Access the RequestQueue through your singleton class.
+
 
     fun getSecret(mCtx: Context) {
+        val requestHandler = RequestHandler.getInstance(mCtx)
         val url = "http://www.example.com"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
@@ -85,32 +90,59 @@ class APIHandler {
                 Log.e("HttpSecretError", "Could not get secret, please check connection")
             }
         )
+        requestHandler.addToRequestQueue(requestSecret)
+        requestHandler.startRequestQueue()
     }
 
     fun postJSON(mCtx: Context, url: String) {
+        val requestHandler = RequestHandler.getInstance(mCtx)
         val jsonArray = JSONHandler().getResults(
             "/data/user/0/com.example.db/databases/",
             "PandemiaRisk.db",
             "Contacts"
         )
-        //TODO find good request, JSONArray might only be suitable for receiving JSON Arrays
-        val jsonObjectRequest = StringRequest(Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                Log.d("HttpPOSTResponse", "Response: %s".format(response.toString()))
-                Toast.makeText(mCtx, "Response: %s".format(response.toString()), Toast.LENGTH_SHORT)
-                    .show()
-                //textView.text = "Response: %s".format(response.toString())
-            },
-            Response.ErrorListener { error ->
-                Toast.makeText(mCtx, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpPOSTError", "Error during exec of request: %s".format(error.toString()))
+
+        try {
+            val requestBody = jsonArray.toString()
+            val stringRequest: StringRequest = object : StringRequest(
+                Method.POST,
+                url,
+                Response.Listener { response -> Log.i("VOLLEY", response) },
+                Response.ErrorListener { error -> Log.e("VOLLEY", error.toString()) }) {
+                override fun getBodyContentType(): String {
+                    return "application/json; charset=utf-8"
+                }
+
+                @Throws(AuthFailureError::class)
+                override fun getBody(): ByteArray {
+                    return try {
+                        requestBody?.toByteArray(charset("utf-8"))!!
+                    } catch (uee: UnsupportedEncodingException) {
+                        VolleyLog.wtf(
+                            "Unsupported Encoding while trying to get the bytes of %s using %s",
+                            requestBody,
+                            "utf-8"
+                        )
+                        null
+                    }!!
+                }
+
+                override fun parseNetworkResponse(response: NetworkResponse): Response<String> {
+                    var responseString = ""
+                    if (response != null) {
+                        responseString = response.statusCode.toString()
+                        // can get more details such as response.headers
+                    }
+                    return Response.success(
+                        responseString,
+                        HttpHeaderParser.parseCacheHeaders(response)
+                    )
+                }
             }
-        )
-
-        // Access the RequestQueue through your singleton class.
-        val requestHandler = RequestHandler.getInstance(mCtx)
-        requestHandler.addToRequestQueue(jsonObjectRequest)
+            requestHandler.addToRequestQueue(stringRequest)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
         requestHandler.startRequestQueue()
-
     }
 }
