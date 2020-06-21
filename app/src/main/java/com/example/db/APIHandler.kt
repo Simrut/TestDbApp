@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import java.io.InputStream
@@ -30,7 +31,7 @@ class RequestHandler constructor(context: Context) {
     val requestQueue: RequestQueue by lazy {
         // applicationContext is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
-        Volley.newRequestQueue(context.applicationContext)
+        Volley.newRequestQueue(context.applicationContext, HurlStack(null, newSslSocketFactory(context)))
     }
 
     fun <T> addToRequestQueue(req: Request<T>) {
@@ -41,7 +42,7 @@ class RequestHandler constructor(context: Context) {
         requestQueue.start()
     }
 
-    private fun newSslSocketFactory(context: Context): SSLSocketFactory? {
+    private fun newSslSocketFactory(context: Context): SSLSocketFactory? {//gets involved in newRequestQueue
         return try {
             // Get an instance of the Bouncy Castle KeyStore format
             val trusted: KeyStore = KeyStore.getInstance("BKS")
