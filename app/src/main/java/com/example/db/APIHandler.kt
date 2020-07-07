@@ -82,7 +82,7 @@ class APIHandler constructor(context: Context) {
 
 
     fun getSecret() {
-        val url = "http://www.example.com"
+        val url = "https://127.0.0.1:8443/"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("SecretResponse", "Secret is %s".format(response.toString()))
