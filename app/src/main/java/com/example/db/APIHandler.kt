@@ -99,7 +99,7 @@ class APIHandler constructor(context: Context) {
 
     fun getSecret() {//TODO doesnt work because of own truststore, yes needs to have its own request queue wo/ trustst
         //val url = "https://www.wikipedia.org"
-        val url = "https://127.0.0.1:8443/"
+        val url = "http://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
