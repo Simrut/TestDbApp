@@ -114,8 +114,8 @@ class APIHandler constructor(context: Context) {
 
         // Access the RequestQueue through your singleton class.
 
-        requestHandler.addToNoSSLRequestQueue(requestSecret)
-        requestHandler.startNoSSLRequestQueue()
+        requestHandler.addToRequestQueue(requestSecret)
+        requestHandler.startRequestQueue()
     }
 
     fun postJSON(url: String) {
