@@ -97,7 +97,7 @@ class APIHandler constructor(context: Context) {
     val requestHandler = RequestHandler.getInstance(context)
 
 
-    fun getSecret() {//TODO doesnt work because of own truststore, yes needs to have its own request queue wo/ trustst
+    fun getSecret() {//TODO set up with appropriate certs to run ssl
         //val url = "https://www.wikipedia.org"
         val url = "http://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
