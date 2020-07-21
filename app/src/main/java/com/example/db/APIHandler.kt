@@ -9,8 +9,9 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.io.ObjectOutputStream
 import java.io.UnsupportedEncodingException
 import java.security.KeyStore
 import javax.net.ssl.SSLContext
@@ -98,35 +99,25 @@ class APIHandler constructor(context: Context) {
     }
 
     fun postJSON(url: String) {
-        val jsonArray = JSONHandler().getResults(
+        val jsonDataObject = JSONHandler().getResults(
             "/data/user/0/com.example.db/databases/",
             "PandemiaRisk.db",
             "Contacts"
         )
 
         try {
-            val requestBody = jsonArray.toString()
             val stringRequest: StringRequest = object : StringRequest(
                 Method.POST,
                 url,
                 Response.Listener { response -> Log.i("VOLLEY", response) },
                 Response.ErrorListener { error -> Log.e("VOLLEY", error.toString()) }) {
                 override fun getBodyContentType(): String {
-                    return "application/json; charset=utf-8"
+                    return "application/xml; charset=utf-8"
                 }
 
                 @Throws(AuthFailureError::class)
                 override fun getBody(): ByteArray {
-                    return try {
-                        requestBody?.toByteArray(charset("utf-8"))!!
-                    } catch (uee: UnsupportedEncodingException) {
-                        VolleyLog.wtf(
-                            "Unsupported Encoding while trying to get the bytes of %s using %s",
-                            requestBody,
-                            "utf-8"
-                        )
-                        null
-                    }!!
+                    return SerializeObject(jsonDataObject)//Object as ByteArray
                 }
 
                 override fun parseNetworkResponse(response: NetworkResponse): Response<String> {
@@ -146,5 +137,14 @@ class APIHandler constructor(context: Context) {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
+    }
+
+    private fun SerializeObject(jsonDataObject: JsonData): ByteArray {
+        val bos = ByteArrayOutputStream()
+        val os = ObjectOutputStream(bos)
+        os.writeObject(jsonDataObject)
+        val serializedObject: ByteArray = bos.toByteArray()
+        return serializedObject
+        os.close()
     }
 }
