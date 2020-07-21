@@ -5,10 +5,14 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.Serializable
 
+class JsonData : Serializable {
+    var dataList: JSONArray? = null
+}
 
 class JSONHandler {
-    public fun getResults(DB_PATH:String, DB_NAME:String, TABLE_NAME:String): JSONArray? {
+    public fun getResults(DB_PATH:String, DB_NAME:String, TABLE_NAME:String): JsonData {
         val myPath: String = DB_PATH + DB_NAME// Set path to your database
         val myTable: String = TABLE_NAME //Set name of your table
 
@@ -41,6 +45,8 @@ class JSONHandler {
         }
         cursor.close()
         Log.d("TAG_NAME", resultSet.toString())
-        return resultSet
+        var jsonData = JsonData()
+        jsonData.dataList = resultSet
+        return jsonData
     }
 }
