@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.io.Serializable
 
 class JsonData : Serializable {
-    var dataList: JSONArray? = null
+    var dataList: String? = null
 }
 
 class JSONHandler {
@@ -46,7 +46,7 @@ class JSONHandler {
         cursor.close()
         Log.d("TAG_NAME", resultSet.toString())
         var jsonData = JsonData()
-        jsonData.dataList = resultSet
+        jsonData.dataList = resultSet.toString()
         return jsonData
     }
 }
