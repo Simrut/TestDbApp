@@ -11,21 +11,21 @@
         android:layout_width="343dp"
         android:layout_height="49dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="URL"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btnGetSecret" />
 
     <Button
         android:id="@+id/btnUpload"
         android:layout_width="367dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         android:text="Upload"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,10 +38,23 @@
         android:layout_width="367dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="8dp"
         android:text="Get Secret"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnUpload" />
+        app:layout_constraintTop_toBottomOf="@+id/btnNoSSLReq" />
+
+    <Button
+        android:id="@+id/btnNoSSLReq"
+        android:layout_width="367dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="8dp"
+        android:text="Get something without SSL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.388"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
