@@ -15,6 +15,14 @@ class UploadToAPIActivity : AppCompatActivity() {
 
             var uploadURL: String
 
+            btnNoSSLReq.setOnClickListener {
+                apiHandler.NoSSLRequest()
+            }
+
+            btnGetSecret.setOnClickListener {
+                apiHandler.getSecret()
+            }
+
             btnUpload.setOnClickListener {
                 if (editUploadUrl.text.isEmpty()) {
                     Toast.makeText(this, "Enter URL", Toast.LENGTH_SHORT).show()
@@ -23,10 +31,6 @@ class UploadToAPIActivity : AppCompatActivity() {
                     uploadURL = editUploadUrl.text.toString()
                     apiHandler.postJSON(uploadURL)
                 }
-            }
-
-            btnGetSecret.setOnClickListener {
-                    apiHandler.getSecret()
             }
         }
 }

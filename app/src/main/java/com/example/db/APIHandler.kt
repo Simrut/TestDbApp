@@ -96,6 +96,20 @@ class APIHandler constructor(context: Context) {
     // Access the RequestQueue through your singleton class.
     val requestHandler = RequestHandler.getInstance(context)
 
+    fun NoSSLRequest(){
+        val url = "http://example.com"
+        val noSSLRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                Toast.makeText(context, "Simple request executed", Toast.LENGTH_SHORT)
+                    .show()
+            },
+            Response.ErrorListener { error ->
+                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
+            }
+        )
+        requestHandler.addToNoSSLRequestQueue(noSSLRequest)
+        requestHandler.startNoSSLRequestQueue()
+    }
 
     fun getSecret() {//TODO set up with appropriate certs to run ssl
         //val url = "https://www.wikipedia.org"
