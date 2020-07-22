@@ -9,7 +9,6 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.InputStream
 import java.io.UnsupportedEncodingException
 import java.security.KeyStore
@@ -30,6 +29,23 @@ class RequestHandler constructor(context: Context) {
             }
     }
 
+    val NoSSLRequestQueue: RequestQueue by lazy {
+        // applicationContext is key, it keeps you from leaking the
+        // Activity or BroadcastReceiver if someone passes one in.
+        Volley.newRequestQueue(
+            context.applicationContext,
+            HurlStack(null)
+        )
+    }
+
+    fun <T> addToNoSSLRequestQueue(req: Request<T>) {
+        NoSSLRequestQueue.add(req)
+    }
+
+    fun startNoSSLRequestQueue() {
+        NoSSLRequestQueue.start()
+    }
+
     val requestQueue: RequestQueue by lazy {
         // applicationContext is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
@@ -47,7 +63,7 @@ class RequestHandler constructor(context: Context) {
         requestQueue.start()
     }
 
-    private fun newSslSocketFactory(context: Context): SSLSocketFactory? {//gets involved in newRequestQueue
+    private fun newSslSocketFactory(context: Context): SSLSocketFactory? {//gets invoked in newRequestQueue
         return try {
             // Get an instance of the Bouncy Castle KeyStore format
             val trusted: KeyStore = KeyStore.getInstance("BKS")
@@ -81,20 +97,25 @@ class APIHandler constructor(context: Context) {
     val requestHandler = RequestHandler.getInstance(context)
 
 
-    fun getSecret() {
-        val url = "https://127.0.0.1:8443/"
+    fun getSecret() {//TODO set up with appropriate certs to run ssl
+        //val url = "https://www.wikipedia.org"
+        val url = "http://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
-                Log.d("SecretResponse", "Secret is %s".format(response.toString()))
+                Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
+                Toast.makeText(context, "Secret pulled from server", Toast.LENGTH_SHORT)
+                    .show()
             },
             Response.ErrorListener { error ->
+                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
                 Log.e("HttpSecretError", "Could not get secret, please check connection")
             }
         )
+
+        // Access the RequestQueue through your singleton class.
+
         requestHandler.addToRequestQueue(requestSecret)
-        requestHandler.startRequestQueue()//TODO dont invoke this multiple times but once
-        Toast.makeText(context, "Secret pulled from server", Toast.LENGTH_SHORT)
-            .show()
+        requestHandler.startRequestQueue()
     }
 
     fun postJSON(url: String) {
