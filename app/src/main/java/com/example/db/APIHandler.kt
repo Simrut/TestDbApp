@@ -97,7 +97,7 @@ class APIHandler constructor(context: Context) {
     val requestHandler = RequestHandler.getInstance(context)
 
     fun NoSSLRequest(){
-        val url = "http://example.com"
+        val url = "http://example.com/index.html"
         val noSSLRequest = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Toast.makeText(context, "Simple request executed", Toast.LENGTH_SHORT)
@@ -107,6 +107,7 @@ class APIHandler constructor(context: Context) {
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
             }
         )
+        noSSLRequest.setShouldCache(false);
         requestHandler.addToNoSSLRequestQueue(noSSLRequest)
         requestHandler.startNoSSLRequestQueue()
     }
@@ -127,7 +128,7 @@ class APIHandler constructor(context: Context) {
         )
 
         // Access the RequestQueue through your singleton class.
-
+        requestSecret.setShouldCache(false);
         requestHandler.addToRequestQueue(requestSecret)
         requestHandler.startRequestQueue()
     }
@@ -176,6 +177,7 @@ class APIHandler constructor(context: Context) {
                     )
                 }
             }
+            stringRequest.setShouldCache(false);
             requestHandler.addToRequestQueue(stringRequest)
             requestHandler.startRequestQueue()//TODO dont invoke every time but once (in constructor?)
         } catch (e: JSONException) {
