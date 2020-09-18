@@ -143,7 +143,7 @@ class APIHandler constructor(context: Context) {
         )
 
         try {
-            val requestBody = jsonArray.toString()
+            val requestBody = jsonArray.toString()//TODO implement objectoutputstream here
             val stringRequest: StringRequest = object : StringRequest(
                 Method.POST,
                 url,
