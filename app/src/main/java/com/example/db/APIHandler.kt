@@ -1,6 +1,7 @@
 package com.example.db
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.android.volley.*
@@ -34,7 +35,11 @@ private fun toBase64(o: Serializable): String? {
     val oos = ObjectOutputStream(baos)
     oos.writeObject(o)
     oos.close()
-    return Base64.getEncoder().encodeToString(baos.toByteArray());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
+    } else {
+        return android.util.Base64.encodeToString(baos.toByteArray(), android.util.Base64.DEFAULT);
+    }
 }
 
 class RequestHandler constructor(context: Context) {
