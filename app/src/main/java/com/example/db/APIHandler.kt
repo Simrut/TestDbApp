@@ -9,13 +9,33 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-import java.io.InputStream
-import java.io.UnsupportedEncodingException
+
 import java.security.KeyStore
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
+import java.util.*;
+import java.io.*;
+import kotlin.properties.Delegates
 
+
+class InfectionDatabase :Serializable{
+    var databaseContent : String by Delegates.notNull()
+
+    constructor(dbContent : String) {
+        this.databaseContent = dbContent
+    }
+}
+
+/** Write the object to a Base64 String.  */
+@Throws(IOException::class)
+private fun toBase64(o: Serializable): String? {
+    val baos = ByteArrayOutputStream()
+    val oos = ObjectOutputStream(baos)
+    oos.writeObject(o)
+    oos.close()
+    return Base64.getEncoder().encodeToString(baos.toByteArray());
+}
 
 class RequestHandler constructor(context: Context) {
     companion object {
@@ -141,9 +161,10 @@ class APIHandler constructor(context: Context) {
             "PandemiaRisk.db",
             "Contacts"
         )
+        val infectionDatabase = InfectionDatabase(jsonArray.toString())
 
         try {
-            val requestBody = jsonArray.toString()//TODO implement objectoutputstream here
+            val requestBody = toBase64(infectionDatabase)//TODO implement objectoutputstream here
             val stringRequest: StringRequest = object : StringRequest(
                 Method.POST,
                 url,
