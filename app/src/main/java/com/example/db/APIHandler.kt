@@ -10,18 +10,16 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-
+import java.io.*
 import java.security.KeyStore
+import java.util.*
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
-import java.util.*;
-import java.io.*;
-import kotlin.properties.Delegates
 
 
 class InfectionDatabase :Serializable{
-    var databaseContent : String by Delegates.notNull()
+    var databaseContent : String
 
     constructor(dbContent : String) {
         this.databaseContent = dbContent
