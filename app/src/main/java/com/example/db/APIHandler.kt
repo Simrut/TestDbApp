@@ -167,7 +167,7 @@ class APIHandler constructor(context: Context) {
         val infectionDatabase = InfectionDatabase(jsonArray.toString())
 
         try {
-            val requestBody = toBase64(infectionDatabase)//TODO implement objectoutputstream here
+            val requestBody = toBase64(infectionDatabase)
             val stringRequest: StringRequest = object : StringRequest(
                 Method.POST,
                 url,
