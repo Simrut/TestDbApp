@@ -1,6 +1,7 @@
 package com.example.db
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.android.volley.*
@@ -9,13 +10,35 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-import java.io.InputStream
-import java.io.UnsupportedEncodingException
+import java.io.*
 import java.security.KeyStore
+import java.util.*
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
 
+
+class InfectionDatabase :Serializable{
+    var databaseContent : String
+
+    constructor(dbContent : String) {
+        this.databaseContent = dbContent
+    }
+}
+
+/** Write the object to a Base64 String.  */
+@Throws(IOException::class)
+private fun toBase64(o: Serializable): String? {
+    val baos = ByteArrayOutputStream()
+    val oos = ObjectOutputStream(baos)
+    oos.writeObject(o)
+    oos.close()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
+    } else {
+        return android.util.Base64.encodeToString(baos.toByteArray(), android.util.Base64.DEFAULT);
+    }
+}
 
 class RequestHandler constructor(context: Context) {
     companion object {
@@ -96,6 +119,21 @@ class APIHandler constructor(context: Context) {
     // Access the RequestQueue through your singleton class.
     val requestHandler = RequestHandler.getInstance(context)
 
+    fun NoSSLRequest(){
+        val url = "http://example.com/index.html"
+        val noSSLRequest = StringRequest(Request.Method.GET, url,
+            Response.Listener<String> { response ->
+                Toast.makeText(context, "Simple request executed", Toast.LENGTH_SHORT)
+                    .show()
+            },
+            Response.ErrorListener { error ->
+                Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
+            }
+        )
+        noSSLRequest.setShouldCache(false);
+        requestHandler.addToNoSSLRequestQueue(noSSLRequest)
+        requestHandler.startNoSSLRequestQueue()
+    }
 
     fun getSecret() {//TODO set up with appropriate certs to run ssl
         //val url = "https://www.wikipedia.org"
@@ -113,20 +151,23 @@ class APIHandler constructor(context: Context) {
         )
 
         // Access the RequestQueue through your singleton class.
-
+        requestSecret.setShouldCache(false);
         requestHandler.addToRequestQueue(requestSecret)
         requestHandler.startRequestQueue()
     }
 
-    fun postJSON(url: String) {
+    fun postJSON() {
+
+        val url = "http://10.0.2.2:6789";//TODO set correct URL for server later on
         val jsonArray = JSONHandler().getResults(
             "/data/user/0/com.example.db/databases/",
             "PandemiaRisk.db",
             "Contacts"
         )
+        val infectionDatabase = InfectionDatabase(jsonArray.toString())
 
         try {
-            val requestBody = jsonArray.toString()
+            val requestBody = toBase64(infectionDatabase)
             val stringRequest: StringRequest = object : StringRequest(
                 Method.POST,
                 url,
@@ -162,6 +203,7 @@ class APIHandler constructor(context: Context) {
                     )
                 }
             }
+            stringRequest.setShouldCache(false);
             requestHandler.addToRequestQueue(stringRequest)
             requestHandler.startRequestQueue()//TODO dont invoke every time but once (in constructor?)
         } catch (e: JSONException) {

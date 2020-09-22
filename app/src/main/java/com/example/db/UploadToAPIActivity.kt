@@ -15,18 +15,16 @@ class UploadToAPIActivity : AppCompatActivity() {
 
             var uploadURL: String
 
-            btnUpload.setOnClickListener {
-                if (editUploadUrl.text.isEmpty()) {
-                    Toast.makeText(this, "Enter URL", Toast.LENGTH_SHORT).show()
-                    editUploadUrl.requestFocus()
-                } else {
-                    uploadURL = editUploadUrl.text.toString()
-                    apiHandler.postJSON(uploadURL)
-                }
+            btnNoSSLReq.setOnClickListener {
+                apiHandler.NoSSLRequest()
             }
 
             btnGetSecret.setOnClickListener {
-                    apiHandler.getSecret()
+                apiHandler.getSecret()
+            }
+
+            btnUpload.setOnClickListener {
+                apiHandler.postJSON()
             }
         }
 }
