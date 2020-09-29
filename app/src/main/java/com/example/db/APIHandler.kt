@@ -94,11 +94,11 @@ class RequestHandler constructor(context: Context) {
             // your trusted certificates (root and any intermediate certs)
             val `in`: InputStream =
                 context.applicationContext.getResources()
-                    .openRawResource(com.example.db.R.raw.mykeystore)
+                    .openRawResource(com.example.db.R.raw.cert_290920)
             try {
                 // Initialize the keystore with the provided trusted certificates
                 // Provide the password of the keystore
-                trusted.load(`in`, "mysecret".toCharArray())
+                trusted.load(`in`, "mypassword".toCharArray())
             } finally {
                 `in`.close()
             }
@@ -136,8 +136,9 @@ class APIHandler constructor(context: Context) {
     }
 
     fun getSecret() {//TODO set up with appropriate certs to run ssl
-        //val url = "https://www.wikipedia.org"
-        val url = "http://10.0.2.2:8443"
+        //val url = "http://example.com/index.html"
+        val url = "https://10.0.2.2:8443"//TODO does it get sent via https?
+        //TODO do this? https://stackoverflow.com/questions/34823724/golang-tls-handshake-error
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
@@ -146,9 +147,11 @@ class APIHandler constructor(context: Context) {
             },
             Response.ErrorListener { error ->
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpSecretError", "Could not get secret, please check connection")
+                Log.e("HttpSecretError", error.message)
             }
         )
+        Toast.makeText(context, "Request is sent to: %s".format(url), Toast.LENGTH_LONG)
+            .show()
 
         // Access the RequestQueue through your singleton class.
         requestSecret.setShouldCache(false);
