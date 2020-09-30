@@ -11,17 +11,17 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
 import java.security.KeyStore
 import java.util.*
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.*
 
 
 class InfectionDatabase :Serializable{
     var databaseContent : String
 
-    constructor(dbContent : String) {
+    constructor(dbContent: String) {
         this.databaseContent = dbContent
     }
 }
@@ -69,12 +69,41 @@ class RequestHandler constructor(context: Context) {
         NoSSLRequestQueue.start()
     }
 
+    // Let's assume your server app is hosting inside a server machine
+    // which has a server certificate in which "Issued to" is "localhost",for example.
+    // Then, inside verify method you can verify "localhost".
+    // If not, you can temporarily return true
+    private fun getHostnameVerifier(): HostnameVerifier {//TODO replace by nullhostnameverf?
+        return object: HostnameVerifier {
+            override fun verify(hostname: String?, session: SSLSession?): Boolean {
+                //return true; // verify always returns true, which could cause insecure network traffic due to trusting TLS/SSL server certificates for wrong hostnames
+                val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
+                return hv.verify("10.0.2.2", session)
+            }
+        }
+    }
+
+    var hurlStack: HurlStack = object : HurlStack() {
+        @Throws(IOException::class)
+        override fun createConnection(url: URL?): HttpURLConnection? {
+            val httpsURLConnection: HttpsURLConnection =
+                super.createConnection(url) as HttpsURLConnection
+            try {
+                httpsURLConnection.setSSLSocketFactory(newSslSocketFactory(context))
+                httpsURLConnection.setHostnameVerifier(getHostnameVerifier())
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return httpsURLConnection
+        }
+    }
+
     val requestQueue: RequestQueue by lazy {
         // applicationContext is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
         Volley.newRequestQueue(
             context.applicationContext,
-            HurlStack(null, newSslSocketFactory(context))
+            this.hurlStack
         )
     }
 
