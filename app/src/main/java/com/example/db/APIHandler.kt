@@ -11,7 +11,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import java.io.*
-import java.net.HttpURLConnection
 import java.net.URL
 import java.security.KeyStore
 import java.util.*
@@ -85,7 +84,7 @@ class RequestHandler constructor(context: Context) {
 
     var hurlStack: HurlStack = object : HurlStack() {
         @Throws(IOException::class)
-        override fun createConnection(url: URL?): HttpURLConnection? {
+        override fun createConnection(url: URL?): HttpsURLConnection {
             val httpsURLConnection: HttpsURLConnection =
                 super.createConnection(url) as HttpsURLConnection
             try {
@@ -127,7 +126,7 @@ class RequestHandler constructor(context: Context) {
             try {
                 // Initialize the keystore with the provided trusted certificates
                 // Provide the password of the keystore
-                trusted.load(`in`, "mysecret".toCharArray())
+                trusted.load(`in`, "mypassword".toCharArray())
             } finally {
                 `in`.close()
             }
@@ -167,7 +166,7 @@ class APIHandler constructor(context: Context) {
     fun getSecret() {//TODO remove hostnameverifier, as repinned cert doesnt contain 10.2.2.2, https://stackoverflow.com/questions/32403479/volley-ssl-hostname-was-not-verified,
         //https://stackoverflow.com/questions/32673568/does-android-volley-support-ssl/32674422#32674422
         //val url = "https://www.wikipedia.org"
-        val url = "http://10.0.2.2:8443"
+        val url = "https://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
@@ -176,7 +175,7 @@ class APIHandler constructor(context: Context) {
             },
             Response.ErrorListener { error ->
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpSecretError", "Could not get secret, please check connection")
+                Log.e("HttpSecretError", error.message)
             }
         )
 
