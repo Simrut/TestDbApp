@@ -75,9 +75,9 @@ class RequestHandler constructor(context: Context) {
     private fun getHostnameVerifier(): HostnameVerifier {//TODO replace by nullhostnameverf?
         return object: HostnameVerifier {
             override fun verify(hostname: String?, session: SSLSession?): Boolean {
-                //return true; // verify always returns true, which could cause insecure network traffic due to trusting TLS/SSL server certificates for wrong hostnames
-                val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
-                return hv.verify("10.0.2.2", session)
+                return true; // verify always returns true, which could cause insecure network traffic due to trusting TLS/SSL server certificates for wrong hostnames
+                //val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
+                //return hv.verify("10.0.2.2", session)
             }
         }
     }
