@@ -11,17 +11,16 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import java.io.*
+import java.net.URL
 import java.security.KeyStore
 import java.util.*
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.*
 
 
 class InfectionDatabase :Serializable{
     var databaseContent : String
 
-    constructor(dbContent : String) {
+    constructor(dbContent: String) {
         this.databaseContent = dbContent
     }
 }
@@ -69,12 +68,41 @@ class RequestHandler constructor(context: Context) {
         NoSSLRequestQueue.start()
     }
 
+    // Let's assume your server app is hosting inside a server machine
+    // which has a server certificate in which "Issued to" is "localhost",for example.
+    // Then, inside verify method you can verify "localhost".
+    // If not, you can temporarily return true
+    private fun getHostnameVerifier(): HostnameVerifier {//TODO replace by nullhostnameverf?
+        return object: HostnameVerifier {
+            override fun verify(hostname: String?, session: SSLSession?): Boolean {
+                return true; // verify always returns true, which could cause insecure network traffic due to trusting TLS/SSL server certificates for wrong hostnames
+                //val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
+                //return hv.verify("10.0.2.2", session)
+            }
+        }
+    }
+
+    var hurlStack: HurlStack = object : HurlStack() {
+        @Throws(IOException::class)
+        override fun createConnection(url: URL?): HttpsURLConnection {
+            val httpsURLConnection: HttpsURLConnection =
+                super.createConnection(url) as HttpsURLConnection
+            try {
+                httpsURLConnection.setSSLSocketFactory(newSslSocketFactory(context))
+                httpsURLConnection.setHostnameVerifier(getHostnameVerifier())
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return httpsURLConnection
+        }
+    }
+
     val requestQueue: RequestQueue by lazy {
         // applicationContext is key, it keeps you from leaking the
         // Activity or BroadcastReceiver if someone passes one in.
         Volley.newRequestQueue(
             context.applicationContext,
-            HurlStack(null, newSslSocketFactory(context))
+            this.hurlStack
         )
     }
 
@@ -94,11 +122,11 @@ class RequestHandler constructor(context: Context) {
             // your trusted certificates (root and any intermediate certs)
             val `in`: InputStream =
                 context.applicationContext.getResources()
-                    .openRawResource(com.example.db.R.raw.mykeystore)
+                    .openRawResource(com.example.db.R.raw.certwithsan)
             try {
                 // Initialize the keystore with the provided trusted certificates
                 // Provide the password of the keystore
-                trusted.load(`in`, "mysecret".toCharArray())
+                trusted.load(`in`, "mypassword".toCharArray())
             } finally {
                 `in`.close()
             }
@@ -135,9 +163,10 @@ class APIHandler constructor(context: Context) {
         requestHandler.startNoSSLRequestQueue()
     }
 
-    fun getSecret() {//TODO set up with appropriate certs to run ssl
+    fun getSecret() {//TODO remove hostnameverifier, as repinned cert doesnt contain 10.2.2.2, https://stackoverflow.com/questions/32403479/volley-ssl-hostname-was-not-verified,
+        //https://stackoverflow.com/questions/32673568/does-android-volley-support-ssl/32674422#32674422
         //val url = "https://www.wikipedia.org"
-        val url = "http://10.0.2.2:8443"
+        val url = "https://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
@@ -146,7 +175,11 @@ class APIHandler constructor(context: Context) {
             },
             Response.ErrorListener { error ->
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpSecretError", "Could not get secret, please check connection")
+                try{
+                    Log.e("HttpSecretError", error.message)}
+                catch (e:Exception)
+                {
+                    Log.e("HttpSecretError", "failed getting secret")}
             }
         )
 
