@@ -175,7 +175,11 @@ class APIHandler constructor(context: Context) {
             },
             Response.ErrorListener { error ->
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
-                Log.e("HttpSecretError", error.message)
+                try{
+                    Log.e("HttpSecretError", error.message)}
+                catch (e:Exception)
+                {
+                    Log.e("HttpSecretError", "failed getting secret")}
             }
         )
 
