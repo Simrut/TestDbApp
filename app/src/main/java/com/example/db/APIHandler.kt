@@ -122,7 +122,7 @@ class RequestHandler constructor(context: Context) {
             // your trusted certificates (root and any intermediate certs)
             val `in`: InputStream =
                 context.applicationContext.getResources()
-                    .openRawResource(com.example.db.R.raw.truststore_from_old_certs_300920)
+                    .openRawResource(com.example.db.R.raw.certwithsan)
             try {
                 // Initialize the keystore with the provided trusted certificates
                 // Provide the password of the keystore
