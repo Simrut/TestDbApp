@@ -20,7 +20,16 @@ class UploadToAPIActivity : AppCompatActivity() {
             }
 
             btnGetSecret.setOnClickListener {
-                apiHandler.getSecret()
+                if (getSecretURL.text.isEmpty()) {
+                    Toast.makeText(
+                        this,
+                        "Enter Url of VM to Get the Secret from",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    editPersonName.requestFocus()
+                }else {
+                    apiHandler.getSecret()
+                }
             }
 
             btnUpload.setOnClickListener {
