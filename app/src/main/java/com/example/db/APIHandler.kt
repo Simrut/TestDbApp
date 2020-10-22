@@ -158,6 +158,13 @@ class APIHandler constructor(context: Context) {
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
             }
         )
+        noSSLRequest.setRetryPolicy(
+            DefaultRetryPolicy(
+                10000,
+                1000,
+                5F
+            )
+        )
         noSSLRequest.setShouldCache(false);
         requestHandler.addToNoSSLRequestQueue(noSSLRequest)
         requestHandler.startNoSSLRequestQueue()
@@ -175,11 +182,11 @@ class APIHandler constructor(context: Context) {
             },
             Response.ErrorListener { error ->
                 Toast.makeText(context, "An error occured", Toast.LENGTH_SHORT).show()
-                try{
-                    Log.e("HttpSecretError", error.message)}
-                catch (e:Exception)
-                {
-                    Log.e("HttpSecretError", "failed getting secret")}
+                try {
+                    Log.e("HttpSecretError", error.message)
+                } catch (e: Exception) {
+                    Log.e("HttpSecretError", "failed getting secret")
+                }
             }
         )
 
