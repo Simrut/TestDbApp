@@ -235,8 +235,8 @@ class APIHandler constructor(context: Context) {
                 }
             }
             stringRequest.setShouldCache(false);
-            requestHandler.addToNoSSLRequestQueue(stringRequest)
-            requestHandler.startNoSSLRequestQueue()//TODO dont invoke every time but once (in constructor?)
+            requestHandler.addToRequestQueue(stringRequest)
+            requestHandler.startRequestQueue()//TODO dont invoke every time but once (in constructor?)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
