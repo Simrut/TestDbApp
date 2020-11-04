@@ -163,10 +163,8 @@ class APIHandler constructor(context: Context) {
         requestHandler.startNoSSLRequestQueue()
     }
 
-    fun getSecret() {//TODO remove hostnameverifier, as repinned cert doesnt contain 10.2.2.2, https://stackoverflow.com/questions/32403479/volley-ssl-hostname-was-not-verified,
-        //https://stackoverflow.com/questions/32673568/does-android-volley-support-ssl/32674422#32674422
-        //val url = "https://www.wikipedia.org"
-        val url = "https://10.0.2.2:8443"
+    fun getSecret(url:String) {
+        //val url = "https://10.0.2.2:8443"
         val requestSecret = StringRequest(Request.Method.GET, url,
             Response.Listener<String> { response ->
                 Log.d("GetSecretResponse", "Response: %s".format(response.toString()))
@@ -189,9 +187,9 @@ class APIHandler constructor(context: Context) {
         requestHandler.startRequestQueue()
     }
 
-    fun postJSON() {
+    fun postJSON(url: String) {
 
-        val url = "http://10.0.2.2:6789";//TODO set correct URL for server later on
+        //val url = "http://10.0.2.2:6789";
         val jsonArray = JSONHandler().getResults(
             "/data/user/0/com.example.db/databases/",
             "PandemiaRisk.db",
