@@ -14,8 +14,6 @@ class PersonAdapter(mCtx : Context, val persons:ArrayList<Person>) : RecyclerVie
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val txtPersonName = itemView.txtPersonName
         val txtInfectionRisk = itemView.txtInfectionRisk
-        val btnUpdate = itemView.btnUpdate
-        val btnDelete = itemView.btnDelete
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonAdapter.ViewHolder {
